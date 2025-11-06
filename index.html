@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CareMatch — Персональный уход</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* === CSS-переменные — меняй цвета в одном месте === */
+    :root {
+      --color-primary: #FFF3C4;      /* пастельный жёлтый */
+      --color-secondary: #C7B9FF;    /* лавандовый */
+      --color-accent: #9D7EFF;       /* яркий акцент */
+      --color-text: #3A2E4A;
+      --color-bg: #FFFCF8;
+      --color-muted: #8B7A99;
+      --radius: 1.5rem;
+      --shadow: 0 8px 24px rgba(199, 185, 255, 0.15);
+      --transition: all 0.3s ease;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Nunito', sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    /* === Шапка === */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(255, 252, 248, 0.92);
+      backdrop-filter: blur(12px);
+      z-index: 1000;
+      padding: 1rem 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: var(--transition);
+    }
+    .logo {
+      font-weight: 800;
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    nav {
+      display: flex;
+      gap: 2rem;
+    }
+    nav a {
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    nav a:hover { color: var(--color-accent); }
+    .btn-primary {
+      background: var(--color-accent);
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius);
+      font-weight: 700;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(157, 126, 255, 0.3);
+    }
+
+    /* === Бургер-меню === */
+    .burger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+    }
+    .burger span {
+      width: 28px;
+      height: 3px;
+      background: var(--color-text);
+      border-radius: 3px;
+      transition: var(--transition);
+    }
+
+    /* === Hero === */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 5%;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle fill="%23FFF3C4" opacity="0.2" cx="30" cy="30" r="20"/><circle fill="%23C7B9FF" opacity="0.2" cx="170" cy="170" r="25"/></svg>') repeat;
+      opacity: 0.3;
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 800px; }
+    .hero h1 {
+      font-size: clamp(2.5rem, 8vw, 4.5rem);
+      margin: 0 0 1rem;
+      line-height: 1.2;
+    }
+    .hero p {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+      color: var(--color-muted);
+    }
+    .btn-hero {
+      font-size: 1.2rem;
+      padding: 1rem 2.5rem;
+    }
+
+    /* === Секции === */
+    section { padding: 5rem 5%; }
+    .section-title {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 3rem;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* === Как это работает === */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .step-card {
+      background: #fff;
+      padding: 2rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: var(--transition);
+    }
+    .step-card.visible { opacity: 1; transform: none; }
+    .step-card svg {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 1rem;
+      fill: var(--color-accent);
+    }
+
+    /* === Преимущества === */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .feature-card {
+      background: #fff;
+      padding: 2rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: var(--transition);
+    }
+    .feature-card.visible { opacity: 1; transform: none; }
+    .feature-icon {
+      width: 80px;
+      height: 80px;
+      background: var(--color-primary);
+      border-radius: 50%;
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+    }
+
+    /* === Отзывы === */
+    .reviews {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .review-card {
+      background: #fff;
+      padding: 2rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(30px);
+      transition: var(--transition);
+    }
+    .review-card.visible { opacity: 1; transform: none; }
+    .review-card img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 1rem;
+    }
+
+    /* === Подвал === */
+    footer {
+      background: var(--color-text);
+      color: #fff;
+      text-align: center;
+      padding: 3rem 5%;
+    }
+    .socials {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .socials a {
+      width: 44px;
+      height: 44px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+    .socials a:hover { background: var(--color-accent); }
+
+    /* === Адаптив === */
+    @media (max-width: 768px) {
+      .burger { display: flex; }
+      nav {
+        position: fixed;
+        top: 70px; left: 0; right: 0;
+        background: var(--color-bg);
+        flex-direction: column;
+        padding: 2rem 5%;
+        gap: 1.5rem;
+        box-shadow: var(--shadow);
+        transform: translateY(-120%);
+        transition: var(--transition);
+      }
+      nav.open { transform: none; }
+      .btn-primary { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Шапка -->
+  <header>
+    <div class="logo">CareMatch</div>
+    <nav id="nav">
+      <a href="#">Главная</a>
+      <a href="#">О нас</a>
+      <a href="test.html">Тест</a>
+      <a href="#">Рекомендации</a>
+      <a href="#">Блог</a>
+      <a href="#">Контакты</a>
+    </nav>
+    <a href="test.html" class="btn-primary">Пройти тест</a>
+    <div class="burger" id="burger">
+      <span></span><span></span><span></span>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Персональный уход для твоей кожи, волос и самочувствия.</h1>
+      <p>Пройди короткий тест и узнай, что действительно подходит именно тебе.</p>
+      <a href="#steps" class="btn-primary btn-hero">Начать тест</a>
+    </div>
+  </section>
+
+  <!-- Как это работает -->
+  <section id="steps">
+    <h2 class="section-title">Как это работает</h2>
+    <div class="steps">
+      <div class="step-card">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        <h3>Ответь на вопросы</h3>
+        <p>Всего 2 минуты — расскажи о себе и своих привычках.</p>
+      </div>
+      <div class="step-card">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+        <h3>Мы анализируем</h3>
+        <p>Наши алгоритмы подбирают идеальные средства.</p>
+      </div>
+      <div class="step-card">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        <h3>Получи рекомендации</h3>
+        <p>Список продуктов и ритуалов именно для тебя.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Преимущества -->
+  <section>
+    <h2 class="section-title">Наши преимущества</h2>
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon">🌿</div>
+        <h3>Натуральные и безопасные продукты</h3>
+        <p>Только проверенные бренды без парабенов и сульфатов.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✨</div>
+        <h3>Индивидуальные советы</h3>
+        <p>Учитываем тип кожи, волос и даже беременность.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤰</div>
+        <h3>Подходит для беременных</h3>
+        <p>Безопасные формулы для мам и малышей.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Отзывы -->
+  <section style="background: linear-gradient(135deg, #f9f5ff, #fffcf8);">
+    <h2 class="section-title">Что говорят наши пользователи</h2>
+    <div class="reviews">
+      <div class="review-card">
+        <img src="https://i.pravatar.cc/150?img=12" alt="Анастасия">
+        <p>«Наконец-то нашла шампунь, который не сушит волосы! Спасибо, CareMatch!»</p>
+        <strong>— Анастасия, 29 лет</strong>
+      </div>
+      <div class="review-card">
+        <img src="https://i.pravatar.cc/150?img=8" alt="Екатерина">
+        <p>«Во время беременности боялась всего. Тест помог подобрать безопасный крем.»</p>
+        <strong>— Екатерина, 32 года</strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- Подвал -->
+  <footer>
+    <div class="socials">
+      <a href="#">📸</a>
+      <a href="#">✈️</a>
+      <a href="#">💜</a>
+    </div>
+    <p>© 2025 CareMatch. Все права защищены.</p>
+  </footer>
+
+  <script>
+    // Бургер-меню
+    const burger = document.getElementById('burger');
+    const nav = document.getElementById('nav');
+    burger.addEventListener('click', () => {
+      nav.classList.toggle('open');
+      burger.classList.toggle('active');
+    });
+
+    // Плавный скролл
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(anchor.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+          if (nav.classList.contains('open')) {
+            nav.classList.remove('open');
+          }
+        }
+      });
+    });
+
+    // Fade-in при прокрутке
+    const fadeElems = document.querySelectorAll('.step-card, .feature-card, .review-card');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    fadeElems.forEach(el => observer.observe(el));
+
+
+    
+  </script>
+</body>
+</html>
